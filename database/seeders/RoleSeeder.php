@@ -20,7 +20,9 @@ class RoleSeeder extends Seeder
         foreach(['Super Admin', 'Admin', 'Developer'] as $hierarchy => $role){
             Role::create([
                 'name' => $role,
-                'hierarchy' => $hierarchy
+                'hierarchy' => $hierarchy,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
             ]);
         }
     }

@@ -30,12 +30,16 @@ class UserSeeder extends Seeder
             ]);
 
             /*
-             * give alex the super admin role
+             * give alex Super Admin and Devloper roles
              * */
-            DB::table('user_role')->insert([
-                'user_id' => 1,
-                'role_id' => 1,
-            ]);
+            foreach([1, 2] as $roleId){
+                DB::table('user_role')->insert([
+                    'user_id' => 1,
+                    'role_id' => $roleId,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s')
+                ]);
+            }
         }
 
         // create 10 users
