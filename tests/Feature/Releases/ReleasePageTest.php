@@ -8,13 +8,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
 
-class TaskPageTest extends TestCase
+class ReleasePageTest extends TestCase
 {
     use RefreshDatabase, WithoutMiddleware;
 
-    public function test_task_list_screen_can_be_rendered(): void
+    public function test_release_list_screen_can_be_rendered(): void
     {
-        $response = $this->get('/tasks');
+        $response = $this->get('/releases');
 
         $response->assertStatus(200);
     }
