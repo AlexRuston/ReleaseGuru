@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReleaseController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
@@ -42,6 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/releases', ReleaseController::class);
     Route::resource('/users', UserController::class);
     Route::resource('/projects', ProjectController::class);
+    Route::resource('/roles', RoleController::class);
 });
 
 require __DIR__.'/auth.php';
