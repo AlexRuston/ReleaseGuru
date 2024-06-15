@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
@@ -26,6 +27,14 @@ class UserSeeder extends Seeder
                 'name' => 'Alex Watson',
                 'email' => 'alex@admin.com',
                 'password' => Hash::make('password'),
+            ]);
+
+            /*
+             * give alex the super admin role
+             * */
+            DB::table('user_role')->insert([
+                'user_id' => 1,
+                'role_id' => 1,
             ]);
         }
 
