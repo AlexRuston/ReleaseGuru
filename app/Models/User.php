@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -43,21 +44,43 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    /*
+     * gives us the roles the users is assinged to
+     * */
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'user_role');
     }
 
-    public function is($roleName)
+    /*
+     * accepts a role name
+     * returns bool check on if the user exists in that role
+     * */
+    public function is($roleName): bool
     {
-        foreach ($this->roles()->get() as $role)
-        {
-            if ($role->name == $roleName)
-            {
-                return true;
-            }
-        }
+        /*
+         * get the role based off name passed
+         * */
+        $role = Role::where('name', $roleName)->first();
 
-        return false;
+        /*
+         * early return if we don't find the role
+         * */
+        if(!$role) return false;
+
+        /*
+         * check if the user exists in the role or not
+         * */
+        if($role){
+            return DB::table('user_role')
+                ->where('user_id', $this->id)
+                ->where('role_id', $role->id)
+                ->exists();
+        }
+    }
+
+    public function highestRole()
+    {
+        return $this->roles()->orderBy('hierarchy')->first();
     }
 }
