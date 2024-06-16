@@ -10,12 +10,25 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        /*
+         * if a user can't viewAny, they definitely can't perform any other actions
+         * so we'll apply the Policy check here
+         * and give them a 403 if they're not allowed to proceed
+         * */
+        if (Auth::user()->cannot('viewAny', Auth::user())) {
+            abort(403);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      *

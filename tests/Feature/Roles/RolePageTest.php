@@ -1,9 +1,7 @@
 <?php
 
-namespace Tests\Feature\Tasks;
+namespace Tests\Feature\Roles;
 
-use App\Models\User;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;

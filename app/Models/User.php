@@ -1,4 +1,8 @@
 <?php
+/**
+ * Policy file
+ * UserPolicy.php
+ */
 
 namespace App\Models;
 
