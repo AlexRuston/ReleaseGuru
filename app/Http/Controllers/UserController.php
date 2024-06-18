@@ -6,12 +6,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\User\CreateUserRequest;
 use App\Http\Resources\UserResource;
+use App\Http\Services\UserService;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 
@@ -24,7 +28,7 @@ class UserController extends Controller
          * so we'll apply the Policy check here
          * and give them a 403 if they're not allowed to proceed
          * */
-        if (Auth::user()->cannot('viewAny', Auth::user())) {
+        if ((Auth::check()) && (Auth::user()->cannot('viewAny', Auth::user()))) {
             abort(403);
         }
     }
@@ -42,37 +46,27 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
-     * @return Response
+     * @param CreateUserRequest $request
+     * @param UserService $service
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(CreateUserRequest $request, UserService $service): RedirectResponse
     {
-        // Validate posted fields
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'role' => ['integer', 'exists:roles,id'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        /*
+         * validate the request
+         * */
+        $validated = $request->validated();
 
-        // Create User
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        /*
+         * create the user
+         * */
+        $create = $service->create($validated);
 
-        // Create access token
-        $token = $user->createToken('authtoken')->plainTextToken;
-
-        // Build return array
-        $response = [
-            'message' => 'user added',
-            'user' => UserResource::make($user),
-            'token' => $token
-        ];
-
-        return response($response, 201);
+        /*
+         * redirect to show this user
+         * */
+        return Redirect::route('users.show', [$create['user']->id])
+            ->with('message', 'User created.');
     }
 
     /**
