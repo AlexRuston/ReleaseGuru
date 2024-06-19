@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
+use Inertia\Inertia;
 
 class UserController extends Controller
 {
@@ -36,11 +37,13 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return \Inertia\Response
      */
     public function index()
     {
-        return response(UserResource::collection(User::all()), 200);
+        return Inertia::render('Users/Index', [
+            'users' => UserResource::collection(User::all()),
+        ]);
     }
 
     /**
@@ -78,6 +81,18 @@ class UserController extends Controller
     public function show(User $user)
     {
         return response(UserResource::make($user), 200);
+    }
+
+
+    /**
+     *
+     * @return \Inertia\Response
+     */
+    public function edit(User $user)
+    {
+        return Inertia::render('Users/Edit',[
+            'user' => $user,
+        ]);
     }
 
     /**

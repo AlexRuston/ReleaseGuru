@@ -51,7 +51,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/tasks', TaskController::class);
     Route::resource('/releases', ReleaseController::class);
-    Route::resource('users', UserController::class);
+    Route::resource('/users', UserController::class);
     Route::resource('/projects', ProjectController::class);
     Route::resource('/roles', RoleController::class);
 
