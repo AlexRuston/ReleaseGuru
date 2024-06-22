@@ -35,6 +35,10 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
                 'highestRole' => $request->user() ? $request->user()->highestRole() : false,
             ],
+            'flash' => [
+                'message' => fn () => $request->session()->get('message'),
+                'class' => fn () => $request->session()->get('class')
+            ],
         ];
     }
 }

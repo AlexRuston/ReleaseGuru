@@ -9,6 +9,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\User\CreateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Http\Services\UserService;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -47,13 +48,24 @@ class UserController extends Controller
     }
 
     /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Inertia\Response
+     */
+    public function create()
+    {
+        return Inertia::render('Users/Create', [
+            'roles' => Role::all()
+        ]);
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param CreateUserRequest $request
      * @param UserService $service
-     * @return RedirectResponse
      */
-    public function store(CreateUserRequest $request, UserService $service): RedirectResponse
+    public function store(CreateUserRequest $request, UserService $service)
     {
         /*
          * validate the request
@@ -68,8 +80,11 @@ class UserController extends Controller
         /*
          * redirect to show this user
          * */
-        return Redirect::route('users.show', [$create['user']->id])
-            ->with('message', 'User created.');
+        return Redirect::route('users.edit', $create['user']->id)
+            ->with([
+                'message' => 'User added successfully',
+                'messageType' => 'success'
+            ]);
     }
 
     /**
@@ -83,7 +98,6 @@ class UserController extends Controller
         return response(UserResource::make($user), 200);
     }
 
-
     /**
      *
      * @return \Inertia\Response
@@ -92,6 +106,7 @@ class UserController extends Controller
     {
         return Inertia::render('Users/Edit',[
             'user' => $user,
+            'roles' => Role::all(),
         ]);
     }
 
