@@ -40,9 +40,9 @@
                                             <InputError class="mt-2" :message="$page.props.errors.email" />
                                         </td>
                                         <td class="py-4 px-6">
-                                            <select v-model="role" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                                            <select class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                                                 <option disabled value="">- -</option>
-                                                <option v-for="role in roles" :key="role.id">{{ role.name }}</option>
+                                                <option v-for="role in roles" :key="role.id" :value="role.id" :selected="props.userRole === role.id">{{ role.name }}</option>
                                             </select>
                                             <InputError class="mt-2" :message="$page.props.errors.email" />
                                         </td>
@@ -73,11 +73,13 @@ import TextInput from '@/Components/TextInput.vue';
 const props = defineProps({
     user: Object,
     roles: Object,
+    userRole: Object,
 })
 
 const form = useForm({
     name: props.user?.name,
     email: props.user?.email,
+    role: props.userRole,
 });
 
 const submit = () => {
@@ -88,5 +90,6 @@ const submit = () => {
         role: form.role,
     });
 };
+console.log(props.userRole);
 
 </script>

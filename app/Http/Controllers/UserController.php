@@ -103,6 +103,7 @@ class UserController extends Controller
     {
         return Inertia::render('Users/Edit',[
             'user' => $user,
+            'userRole' => $user->highestRole()->id,
             'roles' => Role::all(),
         ]);
     }
