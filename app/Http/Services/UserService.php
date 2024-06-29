@@ -14,6 +14,12 @@ class UserService
         //
     }
 
+    /**
+     * create a user
+     *
+     * @param array $parameters
+     * @return array
+     */
     public function create(array $parameters): array
     {
         // Create User
@@ -21,6 +27,8 @@ class UserService
             'name' => $parameters['name'],
             'email' => $parameters['email'],
             'password' => Hash::make($parameters['password']),
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
         ]);
 
         // Create access token
@@ -39,6 +47,33 @@ class UserService
         ];
     }
 
+    /**
+     * update a user
+     *
+     * @param User $user
+     * @param array $parameters
+     * @return array
+     */
+    public function update(User $user, array $parameters): array
+    {
+        // add updated_at to update array
+        $parameters['updated_at'] = date('Y-m-d H:i:s');
+
+        $user->update($parameters);
+
+        // Build return array
+        return [
+            'message' => 'user updated',
+            'user' => $user,
+        ];
+    }
+
+    /**
+     * delete a user
+     *
+     * @param User $user
+     * @return array
+     */
     public function delete(User $user): array
     {
         $user->delete();

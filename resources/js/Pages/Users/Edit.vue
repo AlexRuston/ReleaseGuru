@@ -81,7 +81,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    Inertia.post(`/user/${props.user.id}`, {
+    Inertia.post(`/users/${props.user.id}`, {
         _method: "put",
         name: form.name,
         email: form.email,

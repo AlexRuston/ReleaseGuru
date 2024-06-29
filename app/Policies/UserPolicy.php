@@ -53,9 +53,17 @@ class UserPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, User $model): bool
+    public function update(User $user, User $model): Response
     {
-        //
+        /*
+         * check if:
+         * the user has a role assigned
+         * or
+         * the users highest role gives them greater or equal access rights
+         * */
+        return ($user->highestRole()) && ($user->highestRole()->hierarchy <= $this->accessRole->hierarchy)
+            ? Response::allow()
+            : Response::deny('You do not have access rights to update this model.');
     }
 
     /**
@@ -71,7 +79,7 @@ class UserPolicy
          * */
         return ($user->highestRole()) && ($user->highestRole()->hierarchy <= $this->accessRole->hierarchy)
             ? Response::allow()
-            : Response::deny('You do not have access rights to view this model.');
+            : Response::deny('You do not have access rights to delete this model.');
     }
 
     /**

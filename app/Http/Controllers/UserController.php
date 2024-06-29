@@ -7,6 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\User\CreateUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Http\Services\UserService;
 use App\Models\Role;
@@ -69,14 +70,9 @@ class UserController extends Controller
     public function store(CreateUserRequest $request, UserService $service)
     {
         /*
-         * validate the request
-         * */
-        $validated = $request->validated();
-
-        /*
          * create the user
          * */
-        $create = $service->create($validated);
+        $create = $service->create($request->validated());
 
         /*
          * redirect to show this user
@@ -114,42 +110,33 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param UpdateUserRequest $request
      * @param User $user
-     * @return Response
+     * @param UserService $service
+     * @return RedirectResponse
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, User $user, UserService $service)
     {
         /*
-         * Email should be unique
-         * If a user PUTs name through request with the existing name
-         * So we tell the validation to ignore the unique rule when this happens
+         * check a user can delete another user
          * */
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => [
-                'string',
-                'required',
-                'email',
-                'max:255',
-                Rule::unique('users')->ignore($user),
-            ],
-        ]);
+        if ((Auth::check()) && (Auth::user()->cannot('update', Auth::user()))) {
+            abort(403);
+        }
 
-        // Create array of values to update
-        $updateArray = $validated;
-        $updateArray['updated_at'] = date('Y-m-d H:i:s');
+        /*
+         * update the user
+         * */
+        $update = $service->update($user, $request->validated());
 
-        // Persist
-        $user->update($updateArray);
-
-        // Build return array to show new resource and the fields that were changed in the update
-        $returnArray = [
-            'user' => UserResource::make($user),
-            'updated' => $user->getChanges(),
-        ];
-
-        return response($returnArray, 200);
+        /*
+         * redirect to show this user
+         * */
+        return Redirect::route('users.edit', $update['user']->id)
+            ->with([
+                'message' => 'User updated successfully',
+                'messageType' => 'success'
+            ]);
     }
 
     /**
