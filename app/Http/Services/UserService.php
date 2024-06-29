@@ -38,4 +38,14 @@ class UserService
             'token' => $token
         ];
     }
+
+    public function delete(User $user): array
+    {
+        $user->delete();
+
+        // Build return array
+        return [
+            'message' => 'user deleted',
+        ];
+    }
 }

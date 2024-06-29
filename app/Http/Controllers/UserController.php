@@ -64,6 +64,7 @@ class UserController extends Controller
      *
      * @param CreateUserRequest $request
      * @param UserService $service
+     * @return RedirectResponse
      */
     public function store(CreateUserRequest $request, UserService $service)
     {
@@ -82,7 +83,7 @@ class UserController extends Controller
          * */
         return Redirect::route('users.edit', $create['user']->id)
             ->with([
-                'message' => 'User added successfully',
+                'message' => 'User created successfully',
                 'messageType' => 'success'
             ]);
     }
@@ -155,14 +156,30 @@ class UserController extends Controller
      * Remove the specified resource from storage.
      *
      * @param User $user
-     * @return Response
+     * @param UserService $service
+     * @return RedirectResponse
      */
-    public function destroy(User $user)
+    public function destroy(User $user, UserService $service)
     {
-        $user->delete();
+        /*
+         * check a user can delete another user
+         * */
+        if ((Auth::check()) && (Auth::user()->cannot('delete', Auth::user()))) {
+            abort(403);
+        }
 
-        return response([
-            'message' => 'User deleted successfully',
-        ], 200);
+        /*
+         * delete the user
+         * */
+        $delete = $service->delete($user);
+
+        /*
+         * redirect to show this user
+         * */
+        return Redirect::route('users.index')
+            ->with([
+                'message' => 'User deleted successfully',
+                'messageType' => 'success'
+            ]);
     }
 }
